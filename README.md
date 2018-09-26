@@ -1,7 +1,9 @@
 # aws-cli-okta
 python scripts for adding multi account and auto authentication support for the okta-aws-cli-assume-role
 
-Instructions:
+---
+
+##Instructions:
 
 1) Install all resources from https://github.com/oktadeveloper/okta-aws-cli-assume-role
   ** Do not configure any properties after install **
