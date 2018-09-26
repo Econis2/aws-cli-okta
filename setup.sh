@@ -9,7 +9,7 @@ cd $oktaLocal
 
 sudo rm $oktaLocal/bash_functions
 
-$(https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions --output $oktaLocal/bash_functions)
+$(https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions.sh --output $oktaLocal/bash_functions)
 
 $(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/main.py --output $oktaLocal/main.py)
 
