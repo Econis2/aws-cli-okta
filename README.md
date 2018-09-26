@@ -1,5 +1,5 @@
 # aws-cli-okta
-python scripts for adding multi account and re-authsupport to https://github.com/oktadeveloper/okta-aws-cli-assume-role
+python scripts for adding multi account and auto authentication support for the okta-aws-cli-assume-role
 
 Instructions:
 
