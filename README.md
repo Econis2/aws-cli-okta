@@ -15,5 +15,4 @@ This creates the required directories and downloads the needed python scripts lo
     This is where you need your configuration information 
     All questions must have valid configs (no nulls or blanks)
  
-4) To Be Continued....
-    
+4) usage: ```aws-okta [profileName] [aws command]```
