@@ -7,17 +7,21 @@ oktaLocal="/Users/$username/.okta"
 
 cd $oktaLocal
 
-sudo rm $oktaLocal/bash_functions
+if [ -f bash_functions ]; then
+    sudo rm bash_functions
+fi
 
-$(https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions.sh --output $oktaLocal/bash_functions)
+$(https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions.sh --output bash_functions.sh)
 
-$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/main.py --output $oktaLocal/main.py)
+mv bash_functions.sh bash_functions
 
-sudo chmod +x $oktaLocal/main.py
+$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/main.py --output main.py)
 
-$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/newProfile.py --output $oktaLocal/newProfile.py)
+sudo chmod +x main.py
 
-sudo chmod +x $oktaLocal/newProfile.py
+$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/newProfile.py --output newProfile.py)
+
+sudo chmod +x newProfile.py
 
 echo "Creating required Directories"
 
