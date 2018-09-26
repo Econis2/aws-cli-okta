@@ -7,10 +7,6 @@ oktaLocal="/Users/$username/.okta"
 
 cd $oktaLocal
 
-if [ -f bash_functions ]; then
-    sudo rm bash_functions
-fi
-
 $(https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions.sh --output bash_functions.sh)
 
 mv bash_functions.sh bash_functions
