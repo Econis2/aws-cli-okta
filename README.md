@@ -15,7 +15,7 @@ Requirements:
   
 1) Open a terminal window 
 
-2) Run this command ```/bin/bash <(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/setup.sh)```
+2) Run command: ```/bin/bash <(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/setup.sh)```
 
 3) OSX / Linux:
     - Run the python script ```/Users/[username]/.okta/newProfile.py```
