@@ -42,7 +42,7 @@ function aws-okta {
     #Renew Token
     if (( $? == 0 )); then
         #echo "Collecting Credentials..."
-        withokta aws default $@
+        withokta "aws --profile default" default $@
     
     #Use Existing
     elif (( $? == 1 )); then
