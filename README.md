@@ -30,7 +30,7 @@ NAME
   
 SYNOPSIS
   
-  aws-okta [configure | logout ] [command]
+  aws-okta [ configure | logout ] [ command ]
   
 DESCRIPTION
   
