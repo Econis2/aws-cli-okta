@@ -5,94 +5,286 @@ import sys
 import datetime
 import operator
 
-def getActiveProfileInfo(pathActiveProfile):
+def checkExpired():
+
+    tryStatus = {
+        "code": '',
+        "message": ''
+    }
+
+    oktaBase = os.path.join( os.path.expanduser("~"), ".okta")
+    oktaProfile = os.path.join( oktaBase, "profiles")
+
     # Get the active profiles
-    with open(pathActiveProfile,"r") as line:
-        listActiveProfiles = [ x.rstrip('\n') for x in line ]
-        countActiveProfiles = len(listActiveProfiles) / 5
-        #If a previous profile exists
-        if countActiveProfiles >= 1:
-            dictAccountExpire = {}
-            x = 0
-            # Add the name of the profile and expire datetime for reference
-            while x <= countActiveProfiles - 1:
-                n_count = x * 5
-                dictAccountExpire[ listActiveProfiles[ n_count ].replace("[",'').replace("]",'') ] = listActiveProfiles[ n_count + 3 ].split(" = ")[1]
-                x = x + 1
-            return dictAccountExpire
-        else:
-            return None
+    if os.path.exists(oktaProfile):
 
-def accountExpired(pathActiveProfile, profile):
-    if os.path.isfile(pathActiveProfile):
-        activeProfile = getActiveProfileInfo(pathActiveProfile)
-        try:
-            profileIndex = activeProfile.keys().index(profile)
-        except:
-            profileIndex = -1
-        if activeProfile != None and profileIndex != -1:
-            datetimeExpire = datetime.datetime.strptime(activeProfile[ profile ].split('.')[0] , '%Y-%m-%dT%H:%M:%S')
-            datetimeCurrent = datetime.datetime.now()
-            if datetimeCurrent >= datetimeExpire:
-                return True
-            else:
-                return False
-        else: return True
-    else: return True
+        with open(oktaProfile,"r") as line:
 
-def getProfileFromConfig(pathAwsProfiles,nameProfile):
-    pathProfileInfo = os.path.join(pathAwsProfiles , nameProfile + ".config")
-    with open(pathProfileInfo, "r") as line:
-        awsConfigProfiles = [x.rstrip('\n') for x in line]
-        profileConfig = [
-            '#OktaAWSCLI\n'
-            'OKTA_ORG=' + awsConfigProfiles[0] + "\n",
-            'OKTA_AWS_APP_URL=' + awsConfigProfiles[1]+ "\n",
-            'OKTA_USERNAME=' + awsConfigProfiles[2]+ "\n",
-            'OKTA_BROWSER_AUTH=true\n',
-            'OKTA_AWS_REGION=' + awsConfigProfiles[3]+ "\n",
-        ]
-    return profileConfig
+            try:
+                #active profile Expiration Line
+                expireLine = [ x.rstrip('\n') for x in line ][3]
 
-def writeCurrentConfigProfile(pathAwsProfile , pathActiveConfig, nameProfile):
-    awsConfigProfile = getProfileFromConfig( pathAwsProfile , nameProfile )
-    for line in awsConfigProfile:
-        try:
-            open(pathActiveConfig, "w").writelines(awsConfigProfile)
-        except:
-            print("Unable to write the Profile")
-            exit(5)
+            # File is blank - New Account Required
+            except IndexError:
+                tryStatus['code'] = 205
+                tryStatus['message'] = "Account Expired"
+                
+                return tryStatus
+            # Random Exception
+            except:
+                tryStatus['code'] = 500
+                tryStatus['message'] = "Unable to extract Expiry info"
+
+                return tryStatus
+
+            # Commpare Today with Expire Time
+            try:
+                dateTimeExpire = datetime.datetime.strptime(expireLine.split('.')[0] , '%Y-%m-%dT%H:%M:%S')
+                dateTimeCurrent = datetime.datetime.now()
+            except:
+                tryStatus['code'] = 500
+                tryStatus['message'] = "Unable to extract Expiry info"
+
+                return tryStatus
         
+            if dateTimeCurrent >= dateTimeExpire:
+                tryStatus['code'] = 200
+                tryStatus['message'] = "empty"
+                
+                return tryStatus
+            else:
+                tryStatus['code'] = 205
+                tryStatus['message'] = "Account Expired"
+                
+                return tryStatus
 
+    else:
+        tryStatus.code = 500
+        tryStatus.message = "File not found: " + oktaProfile
 
-# Profile Name from bash script execution
-nameProfile = sys.argv[1]
+        return tryStatus
 
-# /Users/[username]/.okta/
-pathOkta = os.path.join( os.path.expanduser("~"), ".okta")
+# Depricated - Functionality moved to bash_functions
+#def createProfile():
+#
+#   # create Status codes for function completion
+#    tryStatus = {
+#        "code": '',
+#        "message": ''
+#    }
+#
+#    #Base path of the ~/.okta directory
+#    oktaProfilePath = os.path.join( os.path.expanduser("~"), "./okta/config.properties" )
+#
+#    try:
+#        os.remove(oktaProfilePath)
+#    except:
+#        print("Unable to remove the exisitng configuration")
+#
+#       tryStatus['code'] = 500
+#        tryStatus['message'] = "Unable to remove the exisitng configuration"
+#
+#        return tryStatus
+#
+#    print("/n")
+#    #Get a list of required props
+#    test = raw_input("Enter for testing")
+#    propList = [
+#        ("OKTA_ORG=" + sys.argv[2] + "\n"),
+#        ('OKTA_AWS_APP_URL=' + sys.argv[3] + "\n"),
+#        ('OKTA_USERNAME=' + sys.argv[4] + "\n"),
+#        ('OKTA_BROWSER_AUTH=true\n'),
+#        ('OKTA_AWS_REGION=' + sys.argv[5] + "\n")
+#    ]
+#    try:
+#        open(oktaProfilePath, "w").writelines(propList)
+#    except:
+#        print("Unable to write/replace ~/.okta/config.properties")
+#        
+#        tryStatus['code'] = 500
+#        tryStatus['message'] = "Unable to write/replace ~/.okta/config.properties"
+#        
+#        return tryStatus
+#    
+#    tryStatus['code'] = 200
+#    tryStatus['message'] = "empty"
+#    
+#    return tryStatus
+    
+def clearConfig():
 
-# List of Files/Directories in .okta/
-dirListOkta = os.listdir(pathOkta) 
+    # create Status codes for function completion
+    tryStatus = {
+        "code": '',
+        "message": ''
+    }
 
-# /Users/[username]/.okta/awsProfiles/
-pathAwsProfiles = os.path.join( pathOkta , "awsProfiles" )
+    awsBase = os.path.join( os.path.expanduser("~"), ".aws" )
+    oktaBase = os.path.join( os.path.expanduser("~"), ".okta" )
 
-# /Users/[username]/.okta/profiles
-pathActiveProfiles = os.path.join( pathOkta , "profiles" )
+    awsConfig = os.path.join( awsBase, "config" )
+    awsCreds = os.path.join( awsBase, "credentials" )
+    oktaProfiles = os.path.join( oktaBase, "profiles")
 
-# /Users/[username]/.okta/config.properties
-pathActiveConfig = os.path.join( pathOkta , "config.properties")
+    if os.path.exists(awsConfig):
+        try:
+            os.remove(awsConfig)
+        except:
+            print("Unable to remove " + awsConfig)
 
-# If reqs are not in place prompt for setup
-if operator.not_(os.path.isdir(pathAwsProfiles)):
-    print ("Run through the configuration python script first")
-    exit(3)
+            tryStatus['code'] = 500
+            tryStatus['message'] = "Unable to remove " + awsConfig
+            
+            return tryStatus
 
-account_Status = accountExpired( pathActiveProfiles , nameProfile )
+        try:
+            open(awsConfig , "w")
+        except:
+            print('Unable to create blank ' + awsConfig)
 
-writeCurrentConfigProfile( pathAwsProfiles , pathActiveConfig , nameProfile)
+            tryStatus['code'] = 500
+            tryStatus['message'] = "Unable to create blank " + awsConfig
+            
+            return tryStatus
+    else:
+        try:
+            open(awsConfig , "w")
+        except:
+            print('Unable to create blank ' + awsConfig)
 
-if account_Status == True:
-    exit(0)
+            tryStatus['code'] = 500
+            tryStatus['message'] = "Unable to create blank " + awsConfig
+            
+            return tryStatus    
+    
+    if os.path.exists(awsCreds):
+        try:
+            os.remove(awsCreds)
+        except:
+            print("Unable to remove " + awsCreds)
+
+            tryStatus['code'] = 500
+            tryStatus['message'] = 'Unable to remove ' + awsCreds
+            
+            return tryStatus
+        
+        try:
+            open(awsCreds , "w")
+        except:
+            print('Unable to create blank ' + awsCreds)
+
+            tryStatus['code'] = 500
+            tryStatus['message'] = 'Unable to create blank ' + awsCreds
+            
+            return tryStatus
+    else:
+        try:
+            open(awsCreds , "w")
+        except:
+            print('Unable to create blank ' + awsCreds)
+
+            tryStatus['code'] = 500
+            tryStatus['message'] = 'Unable to create blank ' + awsCreds
+            
+            return tryStatus
+
+    if os.path.exists(oktaProfiles):
+        try:
+            os.remove(oktaProfiles)
+        except:
+            print("Unable to remove " + oktaProfiles)
+        
+        try:
+            open(oktaProfiles , "w")
+        except:
+            print('Unable to create blank ' + oktaProfiles)
+
+            tryStatus['code'] = 500
+            tryStatus['message'] = 'Unable to create blank ' + oktaProfiles
+            
+            return tryStatus
+    else:
+        try:
+            open(oktaProfiles , "w")
+        except:
+            print('Unable to create blank ' + oktaProfiles)
+
+            tryStatus['code'] = 500
+            tryStatus['message'] = 'Unable to create blank ' + oktaProfiles
+            
+            return tryStatus        
+
+    tryStatus['code'] = 200
+    tryStatus['message'] = "empty"
+
+    return tryStatus
+
+#Depricated - functionality moved to bash_functions
+#def configure():
+#    
+#    stats = clearConfig()
+#
+#    if stats['code'] == 200:
+#        stats = createNewProfile()
+#
+#        if stats['code'] == 200:
+#            exit(0)
+#    
+#    else:
+#        print( str(stats['code']) + ": [" + stats['message'] + "]")
+#        exit(5)
+
+def logout():
+
+    stats = clearConfig()
+
+    if stats['code'] == 200:
+        exit(3)
+
+    else:
+        print( str(stats['code']) + ": [" + stats['message'] + "]")
+        exit(5)
+
+def status():
+
+    stats = checkExpired()
+
+    if stats['code'] == 200:
+        #exit not-expired
+        return stats
+    
+    elif stats['code'] == 205:
+        #exit expired
+        exit(0)
+    
+    else:
+        exit(5)
+
+#Depricated
+# Made if/else statements
+#def paramSwitch(param):
+#    switch = {
+#        1: configure,
+#        2: logout,
+#        3: status
+#    }
+#    
+#    func = switch.get(param, lambda: "No Value Provided")
+#    print func()
+
+# Command Param
+param = sys.argv[1]
+
+#functionality moved to bash_functions
+#if param == "configure":
+#    configure()
+
+if param == "logout":
+    logout()
+
+elif param == "status":
+    out = status()
+    print(str(out.code) + ": [" + out.message)
+
 else:
-    exit(1)
+    print("No option found")

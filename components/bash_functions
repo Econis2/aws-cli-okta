@@ -1,14 +1,57 @@
 function aws-okta {
-    paramFirst=$0
-    user=$(whoami)
-    #Sets the account profile determines Account Status
-    result=$(python /Users/$user/.okta/main.py $@)
+
+    paramFirst=$1
+    user=`whoami`
+    oktaFile="/Users/$user/.okta/config.properties"
+
+    if [ $paramFirst == "configure" ]; then
+        echo "Entering Configuration..."
+        echo
+        echo "Enter the URL for the Okta Org:"
+        read oktaOrg
+
+        echo "Enter the APP URL for the AWS Okta App:"
+        read oktaApp
+
+        echo "Enter the Okta username:"
+        read oktaUser
+
+        echo "Enter the AWS region:"
+        read awsRegion
+
+        echo "OKTA_ORG=$oktaOrg" > $oktaFile
+        echo "OKTA_AWS_APP_URL=$oktaApp" >> $oktaFile
+        echo "OKTA_USERNAME=$oktaUser" >> $oktaFile
+        echo "OKTA_BROWSER_AUTH=true" >> $oktaFile
+        echo "OKTA_AWS_REGION=$awsRegion" >> $oktaFile
+
+        return 0
+
+    elif [ $paramFirst == "logout" ]; then
+
+        #echo "Clearing session state..."
+        
+        result=$(python /Users/$user/.okta/main.py "logout")
+
+        return 0
+    fi
+    
+    #echo "Checking for previous sessions"
+    result=$(python /Users/$user/.okta/main.py "status")
+
     #Renew Token
     if (( $? == 0 )); then
-        withokta aws $@
+        #echo "Collecting Credentials..."
+        withokta aws default $@
     
     #Use Existing
     elif (( $? == 1 )); then
-        aws --profile $@
+        #echo "Using existing session..."
+        aws --profile default $@
+
+    #Exit Error
+    elif (( $? == 5 )); then
+        echo "Error occured" 1>&2
+        return 5
     fi
 }
