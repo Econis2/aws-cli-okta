@@ -13,12 +13,4 @@ $(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/
 
 sudo chmod +x main.py
 
-$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/newProfile.py --output newProfile.py)
-
-sudo chmod +x newProfile.py
-
-echo "Creating required Directories"
-
-mkdir awsProfiles
-
-exit 0
+return 0
