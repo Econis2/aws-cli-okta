@@ -191,6 +191,8 @@ def clearConfig():
     else:
         tryStatus['code'] = 500
         tryStatus['message'] = "Unable to reset session files"
+
+        return tryStatus
         
 
 #Depricated - functionality moved to bash_functions
