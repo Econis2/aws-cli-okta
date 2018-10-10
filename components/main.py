@@ -172,7 +172,16 @@ def clearConfig():
     aws_config = clearFile(awsConfig)
     aws_creds = clearFile(awsCreds)
     okta_profiles = clearFile(oktaProfiles)
-    okta_session = clearFile(oktaCurrentSession)
+    
+    try:
+        os.remove(oktaCurrentSession)
+        okta_session = {
+            "code": "",
+            "message": ""
+        }
+    except:
+        okta_session['code'] = 500
+        okta_session['message'] = "Unable to remove " + oktaCurrentSession
 
     if aws_config['code'] == 200 and aws_creds['code'] == 200 and okta_profiles['code'] == 200 and okta_session['code'] == 200:
         tryStatus['code'] = 200
