@@ -23,6 +23,30 @@ Run the configure command first ``` aws-okta configure ```
     
 Usage:
 -
-```aws-okta [aws command]```
-##### Example: 
-```aws-okta sts get-caller-identity```
+```
+NAME
+  
+  aws-okta
+  
+SYNOPSIS
+  
+  aws-okta [configure | logout ] [command]
+  
+DESCRIPTION
+  
+  aws-okta is a wrapper for the aws cli that will manage the state of your okta session.
+  
+OPTIONS
+
+  configure    Prompts for the setup of the Okta / AWS account information.
+
+  logout       Removes the current session and all associated credentials
+  
+EXAMPLE
+
+  aws-okta sts get-caller-identity
+ 
+```
+ 
+ 
+ 
