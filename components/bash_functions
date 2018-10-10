@@ -3,6 +3,7 @@ function aws-okta {
     paramFirst=$1
     user=`whoami`
     oktaFile="/Users/$user/.okta/config.properties"
+    awsConfig="/Users/$user/.aws/config"
 
     if [ $paramFirst == "configure" ]; then
         echo "Entering Configuration..."
@@ -24,6 +25,12 @@ function aws-okta {
         echo "OKTA_USERNAME=$oktaUser" >> $oktaFile
         echo "OKTA_BROWSER_AUTH=true" >> $oktaFile
         echo "OKTA_AWS_REGION=$awsRegion" >> $oktaFile
+
+        echo "[default]" > $awsConfig
+        echo "region = $awsRegion" >> $awsConfig
+        echo "output = json" >> $awsConfig
+
+        chmod 600 $awsConfig
 
         return 0
 

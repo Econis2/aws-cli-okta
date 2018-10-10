@@ -169,8 +169,8 @@ def clearConfig():
     oktaProfiles = os.path.join( oktaBase, "profiles")
     oktaCurrentSession = os.path.join( oktaBase, ".current-session")
 
-    aws_config = clearFile(awsConfig)
     aws_creds = clearFile(awsCreds)
+    os.chmod(awsConfig, 0600)
     okta_profiles = clearFile(oktaProfiles)
     
     okta_session = {
