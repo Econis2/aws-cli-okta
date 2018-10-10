@@ -18,13 +18,35 @@ Requirements:
 2) Run command: ```/bin/bash <(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/setup.sh)```
 
 3) OSX / Linux:
-    - Run the python script ```/Users/[username]/.okta/newProfile.py```
-    
-    - This is where you need your configuration information 
-    - All questions must have valid configs (no nulls or blanks)
+Run the configure command first ``` aws-okta configure ```
+
     
 Usage:
 -
-```aws-okta [profileName] [aws command]```
-##### Example: 
-```aws-okta default sts get-caller-identity```
+```
+NAME
+  
+  aws-okta
+  
+SYNOPSIS
+  
+  aws-okta [ configure | logout ] [ command ]
+  
+DESCRIPTION
+  
+  aws-okta is a wrapper for the aws cli that will manage the state of your okta session.
+  
+OPTIONS
+
+  configure    Prompts for the setup of the Okta / AWS account information.
+
+  logout       Removes the current session and all associated credentials
+  
+EXAMPLE
+
+  aws-okta sts get-caller-identity
+ 
+```
+ 
+ 
+ 
