@@ -113,11 +113,53 @@ def checkExpired():
     
 def clearConfig():
 
-    # create Status codes for function completion
-    tryStatus = {
-        "code": '',
-        "message": ''
-    }
+    def clearFile(inPath):
+
+        tryStatus = {
+            "code": '',
+            "message": ''
+        }
+
+        if os.path.exists(inPath):
+            try:
+                os.remove(inPath)
+            except:
+                print("Unable to remove " + inPath)
+
+                tryStatus.code = 500
+                tryStatus.message = "Unable to remove " + inPath
+
+                return tryStatus
+        
+            try:
+                open(inPath , "w")
+            except:
+                print("Unable to create blank file " + inPath)
+
+                tryStatus.code = 500
+                tryStatus.message = "Unable to create blank file " + inPath
+
+                return tryStatus
+        else:
+            try:
+                open(inPath , "w")
+            except:
+                print('Unable to create blank ' + inPath)
+
+                tryStatus.code = 500
+                tryStatus.message = "Unable to create blank " + inPath
+                
+                return tryStatus
+        
+        tryStatus['code'] = 200
+        tryStatus['message'] = "empty"
+
+        return tryStatus
+
+        tryStatus = {
+            code = ""
+            message = ""
+        }
 
     awsBase = os.path.join( os.path.expanduser("~"), ".aws" )
     oktaBase = os.path.join( os.path.expanduser("~"), ".okta" )
@@ -125,99 +167,22 @@ def clearConfig():
     awsConfig = os.path.join( awsBase, "config" )
     awsCreds = os.path.join( awsBase, "credentials" )
     oktaProfiles = os.path.join( oktaBase, "profiles")
+    oktaCurrentSession = os.path.join( oktaBase, ".current-session")
 
-    if os.path.exists(awsConfig):
-        try:
-            os.remove(awsConfig)
-        except:
-            print("Unable to remove " + awsConfig)
+    aws_config = clearFile(awsConfig)
+    aws_creds = clearFile(awsCreds)
+    okta_profiles = clearFile(oktaProfiles)
+    okta_session = clearFile(oktaCurrentSession)
 
-            tryStatus['code'] = 500
-            tryStatus['message'] = "Unable to remove " + awsConfig
-            
-            return tryStatus
+    if aws_config.code == 200 && aws_creds == 200 && okta_profiles == 200 && okta_session == 200:
+        tryStatus.code = 200
+        tryStatus.message = "Empty"
 
-        try:
-            open(awsConfig , "w")
-        except:
-            print('Unable to create blank ' + awsConfig)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = "Unable to create blank " + awsConfig
-            
-            return tryStatus
+        return tryStatus
     else:
-        try:
-            open(awsConfig , "w")
-        except:
-            print('Unable to create blank ' + awsConfig)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = "Unable to create blank " + awsConfig
-            
-            return tryStatus    
-    
-    if os.path.exists(awsCreds):
-        try:
-            os.remove(awsCreds)
-        except:
-            print("Unable to remove " + awsCreds)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = 'Unable to remove ' + awsCreds
-            
-            return tryStatus
+        tryStatus.code = 500
+        tryStatus.message = "Unable to reset session files"
         
-        try:
-            open(awsCreds , "w")
-        except:
-            print('Unable to create blank ' + awsCreds)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = 'Unable to create blank ' + awsCreds
-            
-            return tryStatus
-    else:
-        try:
-            open(awsCreds , "w")
-        except:
-            print('Unable to create blank ' + awsCreds)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = 'Unable to create blank ' + awsCreds
-            
-            return tryStatus
-
-    if os.path.exists(oktaProfiles):
-        try:
-            os.remove(oktaProfiles)
-        except:
-            print("Unable to remove " + oktaProfiles)
-        
-        try:
-            open(oktaProfiles , "w")
-        except:
-            print('Unable to create blank ' + oktaProfiles)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = 'Unable to create blank ' + oktaProfiles
-            
-            return tryStatus
-    else:
-        try:
-            open(oktaProfiles , "w")
-        except:
-            print('Unable to create blank ' + oktaProfiles)
-
-            tryStatus['code'] = 500
-            tryStatus['message'] = 'Unable to create blank ' + oktaProfiles
-            
-            return tryStatus        
-
-    tryStatus['code'] = 200
-    tryStatus['message'] = "empty"
-
-    return tryStatus
 
 #Depricated - functionality moved to bash_functions
 #def configure():
@@ -251,7 +216,7 @@ def status():
 
     if stats['code'] == 200:
         #exit not-expired
-        return stats
+        exit(1)
     
     elif stats['code'] == 205:
         #exit expired
@@ -283,8 +248,7 @@ if param == "logout":
     logout()
 
 elif param == "status":
-    out = status()
-    print(str(out.code) + ": [" + out.message)
+    status()
 
 else:
     print("No option found")
