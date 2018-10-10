@@ -13,4 +13,4 @@ $(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/simple/components/
 
 sudo chmod +x main.py
 
-return 0
+exit 0
