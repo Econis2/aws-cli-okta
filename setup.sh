@@ -7,9 +7,9 @@ oktaLocal="/Users/$username/.okta"
 
 cd $oktaLocal
 
-$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/bash_functions --output bash_functions)
+$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/simple/components/bash_functions --output bash_functions)
 
-$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/master/components/main.py --output main.py)
+$(curl https://raw.githubusercontent.com/Econis2/aws-cli-okta/simple/components/main.py --output main.py)
 
 sudo chmod +x main.py
 
