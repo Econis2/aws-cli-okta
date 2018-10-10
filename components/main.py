@@ -126,8 +126,8 @@ def clearConfig():
             except:
                 print("Unable to remove " + inPath)
 
-                tryStatus.code = 500
-                tryStatus.message = "Unable to remove " + inPath
+                tryStatus['code'] = 500
+                tryStatus['message'] = "Unable to remove " + inPath
 
                 return tryStatus
         
@@ -136,8 +136,8 @@ def clearConfig():
             except:
                 print("Unable to create blank file " + inPath)
 
-                tryStatus.code = 500
-                tryStatus.message = "Unable to create blank file " + inPath
+                tryStatus['code'] = 500
+                tryStatus['message'] = "Unable to create blank file " + inPath
 
                 return tryStatus
         else:
@@ -146,8 +146,8 @@ def clearConfig():
             except:
                 print('Unable to create blank ' + inPath)
 
-                tryStatus.code = 500
-                tryStatus.message = "Unable to create blank " + inPath
+                tryStatus['code'] = 500
+                tryStatus['message'] = "Unable to create blank " + inPath
                 
                 return tryStatus
         
@@ -174,14 +174,14 @@ def clearConfig():
     okta_profiles = clearFile(oktaProfiles)
     okta_session = clearFile(oktaCurrentSession)
 
-    if aws_config.code == 200 and aws_creds == 200 and okta_profiles == 200 and okta_session == 200:
-        tryStatus.code = 200
-        tryStatus.message = "Empty"
+    if aws_config['code'] == 200 and aws_creds['code'] == 200 and okta_profiles['code'] == 200 and okta_session['code'] == 200:
+        tryStatus['code'] = 200
+        tryStatus['message'] = "Empty"
 
         return tryStatus
     else:
-        tryStatus.code = 500
-        tryStatus.message = "Unable to reset session files"
+        tryStatus['code'] = 500
+        tryStatus['message'] = "Unable to reset session files"
         
 
 #Depricated - functionality moved to bash_functions
