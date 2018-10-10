@@ -156,10 +156,10 @@ def clearConfig():
 
         return tryStatus
 
-        tryStatus = {
-            "code" = ""
-            "message" = ""
-        }
+    tryStatus = {
+        "code": "",
+        "message": ""
+    }
 
     awsBase = os.path.join( os.path.expanduser("~"), ".aws" )
     oktaBase = os.path.join( os.path.expanduser("~"), ".okta" )
@@ -174,7 +174,7 @@ def clearConfig():
     okta_profiles = clearFile(oktaProfiles)
     okta_session = clearFile(oktaCurrentSession)
 
-    if aws_config.code == 200 && aws_creds == 200 && okta_profiles == 200 && okta_session == 200:
+    if aws_config.code == 200 and aws_creds == 200 and okta_profiles == 200 and okta_session == 200:
         tryStatus.code = 200
         tryStatus.message = "Empty"
 
