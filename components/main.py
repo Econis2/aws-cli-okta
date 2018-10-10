@@ -173,12 +173,14 @@ def clearConfig():
     aws_creds = clearFile(awsCreds)
     okta_profiles = clearFile(oktaProfiles)
     
+    okta_session = {
+        "code": "",
+        "message": ""
+    }
+
     try:
         os.remove(oktaCurrentSession)
-        okta_session = {
-            "code": "",
-            "message": ""
-        }
+
     except:
         okta_session['code'] = 500
         okta_session['message'] = "Unable to remove " + oktaCurrentSession
