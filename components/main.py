@@ -157,8 +157,8 @@ def clearConfig():
         return tryStatus
 
         tryStatus = {
-            code = ""
-            message = ""
+            "code" = ""
+            "message" = ""
         }
 
     awsBase = os.path.join( os.path.expanduser("~"), ".aws" )
